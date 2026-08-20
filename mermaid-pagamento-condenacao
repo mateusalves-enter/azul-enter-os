@@ -26,7 +26,7 @@ flowchart TD
 
     %% ----- Regime de índices -----
     Q_FAZ{"O devedor é a<br/>Fazenda Pública?"}
-    Q_FAZ -->|Sim| FAZ["SELIC ÚNICA sobre o principal<br/>engloba correção + juros<br/>EC 113/2021 art. 3º"]
+    Q_FAZ -->|Sim| FAZ["* SELIC ÚNICA sobre o principal<br/>engloba correção + juros<br/>EC 113/2021 art. 3º"]
     Q_FAZ -->|Não| Q_DATA{"O período de cálculo<br/>atravessa 30/08/2024?"}
 
     Q_DATA -->|Todo até 29/08/2024| REG_ANT["Regime anterior:<br/>correção por índice de preços (IPCA-E/INPC)<br/>+ juros 1% ao mês<br/>CC art. 406 antigo c/c CTN art. 161 §1º"]
@@ -41,7 +41,7 @@ flowchart TD
     FAZ --> ACRES
 
     JUROS --> ACRES{"Há multas ou<br/>acréscimos no título?"}
-    ACRES -->|Sim| ACRES_S["Somar cláusula penal (CC 408-416)<br/>e/ou astreintes fixadas"]
+    ACRES -->|Sim| ACRES_S["* Somar cláusula penal (CC 408-416)<br/>e/ou astreintes fixadas"]
     ACRES -->|Não| Q_CUMPR
     ACRES_S --> Q_CUMPR
 
@@ -66,10 +66,14 @@ flowchart TD
     CONF -->|Não| READ
     CONF -->|Sim| FIM([Valor consolidado pronto para<br/>cumprimento de sentença])
 
+    LEGENDA["* Não se aplica a casos cíveis de companhias aéreas<br/>ação indenizatória de consumo contra réu privado:<br/>Fazenda Pública/SELIC, cláusula penal e astreintes.<br/>Pontos de JEC não são marcados pois há casos em Vara Cível."]
+
     classDef dec fill:#ecfeff,stroke:#0891b2,stroke-width:1.5px,color:#0e3a45;
     classDef act fill:#ffffff,stroke:#1d4ed8,stroke-width:1.2px,color:#0f172a;
     classDef law fill:#fff7ed,stroke:#b45309,color:#7c2d12;
     classDef fim fill:#f0fdf4,stroke:#059669,stroke-width:1.5px,color:#065f46;
+    classDef nota fill:#fef2f2,stroke:#b91c1c,stroke-width:1.2px,color:#7f1d1d;
+    class LEGENDA nota;
 
     class Q_TIT,Q_RESP,EXTRA,CONTR,Q_FAZ,Q_DATA,ACRES,Q_CUMPR,Q_RITO,CONF dec;
     class READ,USE_TIT,USE_LEI,PRINC,EX_MAT,EX_MOR,CT_TERMO,CT_CIT,FAZ,REG_ANT,REG_NOV,REG_SEG,CORR,JUROS,ACRES_S,CUMPR,JEC,VC,HON,DESC,TOTAL,MEM act;
