@@ -1,0 +1,57 @@
+graph LR
+    %% Configuração de Estilos
+    classDef azul fill:#005da8,stroke:#003d73,color:#fff,font-weight:bold
+    classDef processo fill:#fff,stroke:#005da8,stroke-width:2px,color:#333
+    classDef decisao fill:#f2f2f2,stroke:#005da8,stroke-width:2px,color:#333
+    classDef alerta fill:#fff4dd,stroke:#d4a017,stroke-width:2px,color:#333
+
+    Start((Citação)) --> Cad[Cadastro E-law<br/>CNJ + Objeto Segurado]
+    
+    Cad --> Rel{Valor > 500k?}
+    
+    Rel -- Sim --> RelSim[Sinalizar RELEVANTE<br/>Aprovação Jurídico]
+    Rel -- Não --> SN{Tem Provas no<br/>Service Now?}
+
+    RelSim --> SN
+
+    SN -- Não --> PedSub[TAREFA SUBSÍDIOS D-15<br/>Voo/Trecho/Data]
+    SN -- Sim --> Def[Contestação]
+    
+    PedSub --> Def
+
+    %% Nova Seção de Especificação de Provas
+    Def --> Esp{Especificação<br/>de Provas?}
+    
+    Esp -- Não --> Aud[Audiência]
+    Esp -- Sim --> AdvOf{Advogado<br/>Ofensor?}
+    
+    AdvOf -- Não --> JulgAnt[Não produzir provas<br/>Julgamento Antecipado<br/>Sem Depoimento Pessoal]
+    AdvOf -- Sim --> DepPes[Requerer<br/>Depoimento Pessoal]
+    
+    JulgAnt --> Aud
+    DepPes --> Aud
+    
+    Aud --> Res{Condenação<br/>ou Acordo?}
+
+    Res -- Acordo --> Pred{Advogado<br/>Predatório?}
+    
+    Pred -- Sim --> Red[Reduzir 50% Alçada<br/>ou Negar]
+    Pred -- Não --> Calc[Cálculo Alçada<br/>Ponto = R$ 0,07]
+
+    Red --> Pag[FINANCEIRO D-5<br/>Lançamento Oracle]
+    Calc --> Pag
+    Res -- Condenação --> Pag
+    
+    Pag --> Bloq{Bloqueio?}
+    
+    Bloq -- Sim --> Imp[Impugnação D+3<br/>Solidariedade]
+    Bloq -- Não --> Baixa((BAIXA D+3))
+    
+    Imp --> Baixa
+    Res -- Improcedência --> Baixa
+
+    %% Aplicação de Cores
+    class Start,Baixa azul
+    class Cad,RelSim,PedSub,Def,Aud,Pag,Imp,Red,Calc,JulgAnt,DepPes processo
+    class Rel,SN,Res,Pred,Bloq,Esp,AdvOf decisao
+    class PedSub,Pag,Imp alerta
