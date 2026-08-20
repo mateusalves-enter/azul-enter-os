@@ -1,0 +1,76 @@
+flowchart TD
+    START([Início: título condenatório transitado ou capítulo definitivo]) --> READ["Ler sentença/acórdão<br/>e extrair cada parcela<br/>ref. CPC art. 502 e 509"]
+    READ --> Q_TIT{"O título fixou<br/>índice e/ou taxa de juros?"}
+
+    Q_TIT -->|Sim| USE_TIT["Usar exatamente o índice/taxa<br/>e os termos iniciais do título<br/>(fidelidade à coisa julgada)"]
+    Q_TIT -->|Não / omisso| USE_LEI["Aplicar regra legal supletiva<br/>CC art. 389 par. único + art. 406"]
+    USE_TIT --> PRINC
+    USE_LEI --> PRINC
+
+    PRINC["Apurar o PRINCIPAL de cada parcela<br/>valor histórico na data-base"] --> Q_RESP{"Natureza da<br/>responsabilidade?"}
+
+    %% ----- Termos iniciais -----
+    Q_RESP -->|Extracontratual / ato ilícito| EXTRA{"Tipo de dano?"}
+    Q_RESP -->|Contratual / inadimplemento| CONTR{"Obrigação tem<br/>termo/vencimento?"}
+
+    EXTRA -->|Dano material| EX_MAT["Correção desde o efetivo prejuízo (Súm. 43 STJ)<br/>Juros desde o evento danoso (Súm. 54 STJ)"]
+    EXTRA -->|Dano moral| EX_MOR["Correção desde o arbitramento (Súm. 362 STJ)<br/>Juros desde o evento danoso (Súm. 54 STJ)"]
+
+    CONTR -->|Sim, líquida com termo| CT_TERMO["Mora ex re: juros e correção<br/>desde o vencimento (CC art. 397)"]
+    CONTR -->|Não / ilíquida| CT_CIT["Mora desde a citação<br/>(CC art. 405 / CPC art. 240)"]
+
+    EX_MAT --> Q_FAZ
+    EX_MOR --> Q_FAZ
+    CT_TERMO --> Q_FAZ
+    CT_CIT --> Q_FAZ
+
+    %% ----- Regime de índices -----
+    Q_FAZ{"O devedor é a<br/>Fazenda Pública?"}
+    Q_FAZ -->|Sim| FAZ["SELIC ÚNICA sobre o principal<br/>engloba correção + juros<br/>EC 113/2021 art. 3º"]
+    Q_FAZ -->|Não| Q_DATA{"O período de cálculo<br/>atravessa 30/08/2024?"}
+
+    Q_DATA -->|Todo até 29/08/2024| REG_ANT["Regime anterior:<br/>correção por índice de preços (IPCA-E/INPC)<br/>+ juros 1% ao mês<br/>CC art. 406 antigo c/c CTN art. 161 §1º"]
+    Q_DATA -->|Todo a partir de 30/08/2024| REG_NOV["Nova taxa legal:<br/>correção pelo IPCA (CC 389 p.u.)<br/>juros = SELIC menos IPCA; se < 0 então 0<br/>CC art. 406 §1º"]
+    Q_DATA -->|A cavalo nas duas janelas| REG_SEG["Segmentar em 2 janelas:<br/>1. até 29/08/2024 = regime anterior<br/>2. de 30/08/2024 = nova taxa legal<br/>somar os resultados"]
+
+    REG_ANT --> CORR
+    REG_NOV --> CORR
+    REG_SEG --> CORR
+
+    CORR["Aplicar CORREÇÃO MONETÁRIA<br/>Principal × fator do índice no período<br/>(não corrigir período coberto por SELIC)"] --> JUROS["Aplicar JUROS DE MORA<br/>sobre o valor corrigido, do termo inicial<br/>até a data do cálculo"]
+    FAZ --> ACRES
+
+    JUROS --> ACRES{"Há multas ou<br/>acréscimos no título?"}
+    ACRES -->|Sim| ACRES_S["Somar cláusula penal (CC 408-416)<br/>e/ou astreintes fixadas"]
+    ACRES -->|Não| Q_CUMPR
+    ACRES_S --> Q_CUMPR
+
+    Q_CUMPR{"Fase de cumprimento<br/>e não houve pagamento<br/>voluntário em 15 dias?"}
+    Q_CUMPR -->|Sim| CUMPR["Acrescer multa de 10% + honorários de 10%<br/>CPC art. 523 §1º"]
+    Q_CUMPR -->|Não| Q_RITO
+    CUMPR --> Q_RITO
+
+    %% ----- JEC x VC -----
+    Q_RITO{"Rito: Juizado Especial<br/>ou Vara Cível?"}
+    Q_RITO -->|JEC - Lei 9.099/95| JEC["1º grau: sem honorários nem custas (art. 55)<br/>salvo má-fé; recurso à Turma Recursal:<br/>vencido paga custas + honorários 10-20%<br/>Sentença deve ser líquida (art. 38 p.u.)"]
+    Q_RITO -->|Vara Cível - CPC| VC["Honorários sucumbenciais 10-20% (art. 85)<br/>+ custas conforme regimento do TJ<br/>Liquidação quando ilíquida (art. 509)"]
+
+    JEC --> HON
+    VC --> HON
+
+    HON["Calcular HONORÁRIOS e CUSTAS aplicáveis<br/>ATENÇÃO: custas/taxa judiciária variam por TJ (Estado);<br/>Justiça Federal usa Manual de Cálculos CJF"] --> DESC["Descontar pagamentos e depósitos<br/>parciais já realizados"]
+
+    DESC --> TOTAL["TOTAL = principal corrigido + juros<br/>+ multas/acréscimos + honorários + custas − pagamentos"]
+    TOTAL --> MEM["Montar memória de cálculo<br/>índice, taxa, termos inicial/final, parcela a parcela<br/>CPC art. 524"]
+    MEM --> CONF{"Confere com o dispositivo?<br/>termos iniciais, virada 30/08/2024,<br/>sem dupla correção com SELIC"}
+    CONF -->|Não| READ
+    CONF -->|Sim| FIM([Valor consolidado pronto para<br/>cumprimento de sentença])
+
+    classDef dec fill:#ecfeff,stroke:#0891b2,stroke-width:1.5px,color:#0e3a45;
+    classDef act fill:#ffffff,stroke:#1d4ed8,stroke-width:1.2px,color:#0f172a;
+    classDef law fill:#fff7ed,stroke:#b45309,color:#7c2d12;
+    classDef fim fill:#f0fdf4,stroke:#059669,stroke-width:1.5px,color:#065f46;
+
+    class Q_TIT,Q_RESP,EXTRA,CONTR,Q_FAZ,Q_DATA,ACRES,Q_CUMPR,Q_RITO,CONF dec;
+    class READ,USE_TIT,USE_LEI,PRINC,EX_MAT,EX_MOR,CT_TERMO,CT_CIT,FAZ,REG_ANT,REG_NOV,REG_SEG,CORR,JUROS,ACRES_S,CUMPR,JEC,VC,HON,DESC,TOTAL,MEM act;
+    class START,FIM fim;
